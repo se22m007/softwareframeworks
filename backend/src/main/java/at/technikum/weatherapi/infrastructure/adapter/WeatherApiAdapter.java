@@ -29,11 +29,11 @@ public class WeatherApiAdapter {
     final String url = UriComponentsBuilder.fromHttpUrl(apiUrl)
         .queryParam("key", apiKey)
         .queryParam("q", "Vienna")
-        .queryParam("days", 1)
+        .queryParam("days", 2)
         .toUriString();
     final ResponseEntity<WeatherApiDto> response =
         restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(null, null), WeatherApiDto.class);
 
-    return null;
+    return response.getBody();
   }
 }

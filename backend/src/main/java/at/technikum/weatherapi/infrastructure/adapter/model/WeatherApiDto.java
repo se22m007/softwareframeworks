@@ -6,4 +6,7 @@ import lombok.*;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherApiDto {
+  private LocationDto location;
+  private CurrentDto current;
+  private ForecastDto forecast;
 }

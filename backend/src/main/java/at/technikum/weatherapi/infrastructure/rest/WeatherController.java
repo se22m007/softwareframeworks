@@ -1,6 +1,7 @@
 package at.technikum.weatherapi.infrastructure.rest;
 
 import at.technikum.weatherapi.infrastructure.adapter.WeatherApiAdapter;
+import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
 import lombok.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,7 @@ public class WeatherController {
   private final WeatherApiAdapter adapter;
 
   @GetMapping
-  public void getWeatherData() {
-    adapter.getWeatherData();
+  public WeatherApiDto getWeatherData() {
+    return adapter.getWeatherData();
   }
 }
