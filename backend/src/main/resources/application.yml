@@ -1,0 +1,3 @@
+api:
+  key: 5a42bc8ff90f45a1a33184823232702
+  url: http://api.weatherapi.com/v1/forecast.json
