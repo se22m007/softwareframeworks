@@ -13,6 +13,7 @@ public class WeatherController {
   private final WeatherApiAdapter adapter;
   private final WeatherPublisher publisher;
 
+  @CrossOrigin
   @GetMapping
   public void getWeatherData() {
     publisher.sendMessage();
