@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.*;
 public class WeatherController {
 
   private final WeatherApiAdapter adapter;
+  private final WeatherPublisher publisher;
 
   @GetMapping
-  public WeatherApiDto getWeatherData() {
-    return adapter.getWeatherData();
+  public void getWeatherData() {
+    publisher.sendMessage();
   }
 }
