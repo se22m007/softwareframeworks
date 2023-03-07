@@ -9,9 +9,15 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { HttpClientModule } from '@angular/common/http';
 
+import { RxStompConfig } from '@stomp/rx-stomp';
+
 import { NgxsWebsocketPluginModule } from '@ngxs/websocket-plugin'
 import { NgxsModule } from '@ngxs/store'
 import { KafkaState } from './state/kafka.state';
+import { myRxStompConfig } from './rx-stomp.config';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { rxStompServiceFactory } from './rx-stomp-service-factory';
+import { RxStompService } from './rxstomp.service';
 
 @NgModule({
   declarations: [
@@ -21,6 +27,8 @@ import { KafkaState } from './state/kafka.state';
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
     MatTableModule,
     MatToolbarModule,
     MatButtonModule,
@@ -31,7 +39,17 @@ import { KafkaState } from './state/kafka.state';
       url: 'ws://localhost:9092/websocket'
     })
   ],
-  providers: [],
+  providers: [
+    {
+       provide: RxStompConfig,
+       useValue: myRxStompConfig
+    },
+    {
+       provide: RxStompService,
+       useFactory: rxStompServiceFactory,
+       deps: [RxStompConfig]
+    }
+ ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -25,4 +25,6 @@
 </table>
 
 
-{{ kafkaMessages$ | async }}
+<div *ngFor="let currentMessage of messages">
+  {{ currentMessage }}
+</div>

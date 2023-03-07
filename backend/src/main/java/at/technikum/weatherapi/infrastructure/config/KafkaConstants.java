@@ -1,9 +1,8 @@
-package at.technikum.weatherapi.constants;
-
-import at.technikum.weatherapi.infrastructure.config.KafkaProducerConfig;
+package at.technikum.weatherapi.infrastructure.config;
 
 public final class KafkaConstants {
 
-    public final String WeatherTopic = "weather";
+    public static final String WEATHER_TOPIC = "weather";
+    public static final String WEBSOCKET_DESTINATION = "/topic/weather";
     private KafkaConstants() {}
 }

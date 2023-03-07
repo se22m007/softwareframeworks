@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Inject, Injectable, OnInit } from '@angular/core';
+import { Component, Inject, Injectable, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgxsOnInit, Select, Store } from '@ngxs/store';
 import { ConnectWebSocket } from '@ngxs/websocket-plugin';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
+import { RxStompService } from './rxstomp.service';
 import { KafkaState } from './state/kafka.state';
 
 @Component({
@@ -10,13 +12,17 @@ import { KafkaState } from './state/kafka.state';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.sass']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'frontend';
+
+  myForm: FormGroup;
+  messages: string[];
+  private destroy$ = new Subject();
 
   @Select(KafkaState.messages)
   kafkaMessages$: Observable<string[]>
 
-  constructor(private http: HttpClient, private store: Store) {}
+  constructor(private http: HttpClient, private rxStompService: RxStompService, private store: Store) {}
 
   public weatherData:WeatherData[] = [
     { city: "Vienna", temperature: 10.5 },
@@ -33,7 +39,21 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(){
-    this.store.dispatch(new ConnectWebSocket())
+    this.messages = [];
+
+    this.rxStompService.watch('/topic/weather')
+      .pipe(
+        takeUntil(this.destroy$)
+      ).subscribe((message) => {
+        console.log('Received from websocket: ' + message.body);
+        this.messages.push(message.body);
+        this.messages = this.messages.slice(-5);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.unsubscribe();
   }
 
 }

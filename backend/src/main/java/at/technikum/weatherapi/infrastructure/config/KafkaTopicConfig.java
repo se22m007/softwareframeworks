@@ -28,6 +28,6 @@ public class KafkaTopicConfig {
 
   @Bean
   public NewTopic topic1() {
-    return new NewTopic("weather", 1, (short) 1);
+    return new NewTopic(KafkaConstants.WEATHER_TOPIC, 1, (short) 1);
   }
 }
