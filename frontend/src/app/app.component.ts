@@ -1,11 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Inject, Injectable, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { NgxsOnInit, Select, Store } from '@ngxs/store';
-import { ConnectWebSocket } from '@ngxs/websocket-plugin';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
+import { WeatherData } from './model';
 import { RxStompService } from './rxstomp.service';
-import { KafkaState } from './state/kafka.state';
 
 @Component({
   selector: 'app-root',
@@ -15,23 +12,12 @@ import { KafkaState } from './state/kafka.state';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'frontend';
 
-  myForm: FormGroup;
-  messages: string[];
+  weatherData: WeatherData[];
   private destroy$ = new Subject();
 
-  @Select(KafkaState.messages)
-  kafkaMessages$: Observable<string[]>
+  constructor(private http: HttpClient, private rxStompService: RxStompService) {}
 
-  constructor(private http: HttpClient, private rxStompService: RxStompService, private store: Store) {}
-
-  public weatherData:WeatherData[] = [
-    { city: "Vienna", temperature: 10.5 },
-    { city: "Rome", temperature: 15.2 },
-    { city: "Capetown", temperature: 26.3 }
-  ]
-
-  displayedColumns: string[] = ['city', 'temperature'];
-  dataSource = this.weatherData;
+  displayedColumns: string[] = ['location.name'];
 
   public callProducerEndpoint() {
     this.http.get("http://localhost:8080/weather")
@@ -39,15 +25,15 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(){
-    this.messages = [];
+    this.weatherData = [];
 
     this.rxStompService.watch('/topic/weather')
       .pipe(
         takeUntil(this.destroy$)
       ).subscribe((message) => {
+        var result = JSON.parse(message.body) as WeatherData;
         console.log('Received from websocket: ' + message.body);
-        this.messages.push(message.body);
-        this.messages = this.messages.slice(-5);
+        this.weatherData.push(result);
       });
   }
 
@@ -56,9 +42,4 @@ export class AppComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-}
-
-interface WeatherData {
-  city: string;
-  temperature: number;
 }

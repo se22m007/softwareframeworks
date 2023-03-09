@@ -11,13 +11,11 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { RxStompConfig } from '@stomp/rx-stomp';
 
-import { NgxsWebsocketPluginModule } from '@ngxs/websocket-plugin'
-import { NgxsModule } from '@ngxs/store'
-import { KafkaState } from './state/kafka.state';
 import { myRxStompConfig } from './rx-stomp.config';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { rxStompServiceFactory } from './rx-stomp-service-factory';
 import { RxStompService } from './rxstomp.service';
+import {MatListModule} from '@angular/material/list'; 
 
 @NgModule({
   declarations: [
@@ -32,12 +30,7 @@ import { RxStompService } from './rxstomp.service';
     MatTableModule,
     MatToolbarModule,
     MatButtonModule,
-    NgxsModule.forRoot([
-      KafkaState
-    ]),
-    NgxsWebsocketPluginModule.forRoot({
-      url: 'ws://localhost:9092/websocket'
-    })
+    MatListModule
   ],
   providers: [
     {
