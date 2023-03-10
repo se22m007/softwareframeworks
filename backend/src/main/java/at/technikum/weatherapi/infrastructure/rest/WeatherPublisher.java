@@ -1,7 +1,6 @@
 package at.technikum.weatherapi.infrastructure.rest;
 
-import at.technikum.weatherapi.infrastructure.adapter.WeatherApiAdapter;
-import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
+import at.technikum.weatherapi.application.WeatherService;
 import at.technikum.weatherapi.infrastructure.config.JsonMapper;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -11,16 +10,16 @@ public class WeatherPublisher {
 
    private final KafkaTemplate<String, String> kafkaTemplate;
 
-   private final WeatherApiAdapter weatherApiAdapter;
+   private final WeatherService weatherService;
 
   public WeatherPublisher(
       final KafkaTemplate<String, String> kafkaTemplate,
-      final WeatherApiAdapter weatherApiAdapter) {
+      final WeatherService weatherService) {
     this.kafkaTemplate = kafkaTemplate;
-    this.weatherApiAdapter = weatherApiAdapter;
+    this.weatherService = weatherService;
   }
 
   public void sendMessage() {
-      kafkaTemplate.send("weather", JsonMapper.deserialize(weatherApiAdapter.getWeatherData()));
+      kafkaTemplate.send("weather", JsonMapper.deserialize(weatherService.getWeatherData()));
   }
 }

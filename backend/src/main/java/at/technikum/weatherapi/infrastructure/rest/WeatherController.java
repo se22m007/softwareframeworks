@@ -10,12 +10,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/weather")
 public class WeatherController {
 
-  private final WeatherApiAdapter adapter;
   private final WeatherPublisher publisher;
 
   @CrossOrigin
   @GetMapping
-  public void getWeatherData() {
+  public void publishWeatherData() {
     publisher.sendMessage();
   }
 }
