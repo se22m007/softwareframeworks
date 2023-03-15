@@ -17,7 +17,7 @@ public class JsonMapper {
     } catch (final JsonProcessingException exception) {
       log.info(exception.getMessage());
       log.info("Error when deserializing");
-      throw new IllegalArgumentException("???");
+      throw new IllegalArgumentException(exception);
     }
   }
 }

@@ -1,0 +1,23 @@
+{
+	"fields": [
+		{
+			"name": "locationName",
+			"type": "string"
+		},
+		{
+			"name": "temp",
+			"type": "double"
+		},
+		{
+			"name": "feelslikeTemp",
+			"type": "double"
+		},
+		{
+		    "name": "country",
+		    "type": "string"
+		}
+	],
+	"name": "WeatherApiCompactDto",
+	"type": "record",
+	"namespace": "at.technikum.weatherapi"
+}

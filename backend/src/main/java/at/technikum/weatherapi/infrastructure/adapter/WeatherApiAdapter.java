@@ -25,10 +25,10 @@ public class WeatherApiAdapter {
     this.apiUrl = apiUrl;
   }
 
-  public WeatherApiDto getWeatherData() {
+  public WeatherApiDto getWeatherData(final String city) {
     final String url = UriComponentsBuilder.fromHttpUrl(apiUrl)
         .queryParam("key", apiKey)
-        .queryParam("q", "Vienna")
+        .queryParam("q", city)
         .queryParam("days", 2)
         .toUriString();
     final ResponseEntity<WeatherApiDto> response =

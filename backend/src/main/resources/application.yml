@@ -1,9 +1,13 @@
 api:
   key: 5a42bc8ff90f45a1a33184823232702
   url: http://api.weatherapi.com/v1/forecast.json
+
 spring:
   kafka:
-    bootstrap-address: localhost:9092
+    confluent:
+      key: RZVJ6YDRPIJWV4QU
+      secret: DN9Ai6nKtpq4R6BG3HRXDZHCwhN9F2iVTRFnB4+b6wXTt5S0xLVdC8r7ZTHQ36mv
+    config-file: src/main/resources/client.properties
     consumer:
       group-id: springBootGroup
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer

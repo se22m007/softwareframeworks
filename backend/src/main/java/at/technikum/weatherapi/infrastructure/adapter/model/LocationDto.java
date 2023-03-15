@@ -6,4 +6,5 @@ import lombok.*;
 @Data
 public class LocationDto {
   private String name;
+  private String country;
 }
