@@ -173,7 +173,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/target/generated-sources/avro</source>
+                                <source>${project.basedir}/target/generated-sources/avro</source>
                             </sources>
                         </configuration>
                     </execution>
