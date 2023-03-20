@@ -2,6 +2,7 @@ package at.technikum.weatherapi.application;
 
 
 import at.technikum.weatherapi.WeatherApiCompactDto;
+import at.technikum.weatherapi.application.model.WeatherApiJsonDto;
 import at.technikum.weatherapi.infrastructure.adapter.WeatherApiAdapter;
 import at.technikum.weatherapi.infrastructure.adapter.kafka.WeatherConsumer;
 import at.technikum.weatherapi.infrastructure.adapter.kafka.WeatherProducer;
@@ -9,6 +10,7 @@ import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
 import at.technikum.weatherapi.infrastructure.config.CustomSerdes;
 import at.technikum.weatherapi.infrastructure.config.KafkaConfig;
 
+import at.technikum.weatherapi.infrastructure.rest.model.WeatherApiResponseDto;
 import lombok.*;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
@@ -51,15 +53,28 @@ public class WeatherService {
     }
   }
 
+  public void publishCompactWeatherDataJson() {
+    for (final String city : cities) {
+      final WeatherApiDto weatherApiDto = weatherApiAdapter.getWeatherData(city);
+      final WeatherApiJsonDto weatherApiJsonDto = new WeatherApiJsonDto();
+          weatherApiJsonDto.setLocationName(weatherApiDto.getLocation().getName());
+          weatherApiJsonDto.setFeelslikeTemp(weatherApiDto.getCurrent().getFeelslike_c());
+          weatherApiJsonDto.setTemp(weatherApiDto.getCurrent().getTemp_c());
+          weatherApiJsonDto.setCountry(weatherApiDto.getLocation().getCountry());
+      weatherProducer.sendRecordJson(KafkaConfig.WEATHER_TOPIC_JSON, KafkaConfig.WEATHER_KEY,
+          weatherApiJsonDto);
+    }
+  }
+
   public List<WeatherApiCompactDto> consumeCompactWeatherData() {
     return weatherConsumer.consume();
   }
 
   public void aggregateWeatherData() {
-    final Properties properties = kafkaConfig.loadConsumerConfig();
+    final Properties properties = kafkaConfig.loadConsumerJsonConfig();
     final StreamsBuilder streamsBuilder = new StreamsBuilder();
 
-    streamsBuilder.<String, WeatherApiCompactDto>stream(KafkaConfig.WEATHER_TOPIC)
+    streamsBuilder.<String, WeatherApiJsonDto>stream(KafkaConfig.WEATHER_TOPIC_JSON)
         .groupBy((key, value) -> value.getCountry())
         .aggregate(this::getAverageTemp, (key, value, aggregator) -> {
           aggregator.getTemps().add(value.getTemp());

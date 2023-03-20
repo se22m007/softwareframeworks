@@ -11,6 +11,8 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.streams.StreamsConfig;
+import org.apache.tomcat.Jar;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +31,7 @@ import java.util.Properties;
 public class KafkaConfig {
 
   public static final String WEATHER_TOPIC = "weather-stats";
+  public static final String WEATHER_TOPIC_JSON = "weather-stats-json-new";
   public static final String WEATHER_AGGREGATED_TOPIC = "weather-aggregated-stats-without-avro";
   public static final String WEATHER_AGGREGATED_RESULT_TOPIC = "weather-result-without-avro";
   public static final String WEATHER_KEY = "weather_key";
@@ -40,7 +43,7 @@ public class KafkaConfig {
   }
 
   public Properties loadConfig() {
-    if(!Files.exists(Paths.get(configFilePath))) {
+    if (!Files.exists(Paths.get(configFilePath))) {
       throw new IllegalArgumentException("Isn Problem.");
     }
     final Properties cfg = new Properties();
@@ -62,12 +65,34 @@ public class KafkaConfig {
     return properties;
   }
 
+  public Properties loadProducerJsonConfig() {
+    final Properties properties = loadConfig();
+    properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+        StringSerializer.class);
+    properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+        JsonSerializer.class);
+    return properties;
+  }
+
   public Properties loadConsumerConfig() {
     final Properties properties = loadConfig();
     properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
         StringDeserializer.class);
     properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
         KafkaAvroDeserializer.class);
+    properties.put("specific.avro.reader", true);
+    properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-java-getting-started");
+    properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    return properties;
+  }
+
+  public Properties loadConsumerJsonConfig() {
+    final Properties properties = loadConfig();
+    properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+        StringDeserializer.class);
+    properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+        JsonDeserializer.class);
+    properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, CustomSerdes.averageTemp().getClass());
     properties.put("specific.avro.reader", true);
     properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-java-getting-started");
     properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");

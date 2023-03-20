@@ -19,4 +19,11 @@ public class WeatherProducer {
     producer.send(new ProducerRecord<>(topic, key, value));
     producer.close();
   }
+
+  public void sendRecordJson(final String topic, final String key, final Object value) {
+    final Producer<String, Object> producer =
+        new KafkaProducer<>(kafkaConfig.loadProducerJsonConfig());
+    producer.send(new ProducerRecord<>(topic, key, value));
+    producer.close();
+  }
 }

@@ -31,6 +31,12 @@ public class WeatherController {
   }
 
   @CrossOrigin
+  @GetMapping("/json")
+  public void publishWeatherDataJson() {
+    weatherService.publishCompactWeatherDataJson();
+  }
+
+  @CrossOrigin
   @GetMapping("/consume")
   public List<WeatherApiResponseDto> consumeWeatherData() {
     final List<WeatherApiCompactDto> dtos = weatherService.consumeCompactWeatherData();
