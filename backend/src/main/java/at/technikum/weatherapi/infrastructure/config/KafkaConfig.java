@@ -29,7 +29,8 @@ import java.util.Properties;
 public class KafkaConfig {
 
   public static final String WEATHER_TOPIC = "weather-stats";
-  public static final String WEATHER_AGGREGATED_TOPIC = "weather-aggregated-stats";
+  public static final String WEATHER_AGGREGATED_TOPIC = "weather-aggregated-stats-without-avro";
+  public static final String WEATHER_AGGREGATED_RESULT_TOPIC = "weather-result-without-avro";
   public static final String WEATHER_KEY = "weather_key";
 
   private final String configFilePath;

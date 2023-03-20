@@ -3,8 +3,10 @@ package at.technikum.weatherapi.infrastructure.rest;
 import at.technikum.weatherapi.WeatherApiCompactDto;
 import at.technikum.weatherapi.application.WeatherService;
 import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
+import at.technikum.weatherapi.infrastructure.config.JsonDeserializer;
 import at.technikum.weatherapi.infrastructure.config.JsonMapper;
 import at.technikum.weatherapi.infrastructure.config.KafkaConfig;
+import at.technikum.weatherapi.infrastructure.rest.model.WeatherApiResponseDto;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
@@ -30,11 +32,19 @@ public class WeatherController {
 
   @CrossOrigin
   @GetMapping("/consume")
-  public String consumeWeatherData() {
+  public List<WeatherApiResponseDto> consumeWeatherData() {
     final List<WeatherApiCompactDto> dtos = weatherService.consumeCompactWeatherData();
-    return String.join(", ", dtos.stream()
-        .map(SpecificRecordBase::toString)
-        .toList());
+    final List<WeatherApiResponseDto> response = dtos.stream()
+        .map(dto -> {
+          final WeatherApiResponseDto responseElement = new WeatherApiResponseDto();
+          responseElement.setCountry(dto.getCountry());
+          responseElement.setTemp(dto.getTemp());
+          responseElement.setLocationName(dto.getLocationName());
+          responseElement.setTemp(dto.getFeelslikeTemp());
+          return responseElement;
+        })
+        .toList();
+    return response;
   }
 
   @CrossOrigin

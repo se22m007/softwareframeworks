@@ -68,7 +68,7 @@ public class WeatherService {
         }, Materialized.<String, AverageTemp, KeyValueStore<Bytes, byte[]>>as(KafkaConfig.WEATHER_AGGREGATED_TOPIC)
             .withValueSerde(CustomSerdes.averageTemp()))
         .toStream()
-        .to("average-temperatures", Produced.with(Serdes.String(), CustomSerdes.averageTemp()));
+        .to(KafkaConfig.WEATHER_AGGREGATED_RESULT_TOPIC, Produced.with(Serdes.String(), CustomSerdes.averageTemp()));
 
     final Topology topology = streamsBuilder.build();
     final KafkaStreams kafkaStreams = new KafkaStreams(topology, properties);
