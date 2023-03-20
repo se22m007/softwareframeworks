@@ -1,4 +1,4 @@
-package at.technikum.weatherapi.infrastructure.config;
+package at.technikum.weatherapi.infrastructure.config.serdes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

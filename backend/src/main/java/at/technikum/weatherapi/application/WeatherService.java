@@ -2,14 +2,14 @@ package at.technikum.weatherapi.application;
 
 
 import at.technikum.weatherapi.WeatherApiCompactDto;
-import at.technikum.weatherapi.application.model.WeatherApiJsonDto;
+import at.technikum.weatherapi.domain.model.AverageTemp;
+import at.technikum.weatherapi.domain.model.WeatherApiJsonDto;
 import at.technikum.weatherapi.infrastructure.adapter.WeatherApiAdapter;
 import at.technikum.weatherapi.infrastructure.adapter.kafka.WeatherConsumer;
 import at.technikum.weatherapi.infrastructure.adapter.kafka.WeatherProducer;
 import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
-import at.technikum.weatherapi.infrastructure.config.AverageTempSerde;
 import at.technikum.weatherapi.infrastructure.config.KafkaConfig;
-
+import at.technikum.weatherapi.infrastructure.config.serdes.AverageTempSerde;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * Lots of duplicated code for the purpose of convenience.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -57,10 +60,10 @@ public class WeatherService {
     for (final String city : cities) {
       final WeatherApiDto weatherApiDto = weatherApiAdapter.getWeatherData(city);
       final WeatherApiJsonDto weatherApiJsonDto = new WeatherApiJsonDto();
-          weatherApiJsonDto.setLocationName(weatherApiDto.getLocation().getName());
-          weatherApiJsonDto.setFeelslikeTemp(weatherApiDto.getCurrent().getFeelslike_c());
-          weatherApiJsonDto.setTemp(weatherApiDto.getCurrent().getTemp_c());
-          weatherApiJsonDto.setCountry(weatherApiDto.getLocation().getCountry());
+      weatherApiJsonDto.setLocationName(weatherApiDto.getLocation().getName());
+      weatherApiJsonDto.setFeelslikeTemp(weatherApiDto.getCurrent().getFeelslike_c());
+      weatherApiJsonDto.setTemp(weatherApiDto.getCurrent().getTemp_c());
+      weatherApiJsonDto.setCountry(weatherApiDto.getLocation().getCountry());
       weatherProducer.sendRecordJson(KafkaConfig.WEATHER_TOPIC_JSON, weatherApiJsonDto.getCountry(),
           weatherApiJsonDto);
     }
@@ -81,25 +84,24 @@ public class WeatherService {
     streamsBuilder.<String, WeatherApiJsonDto>stream(KafkaConfig.WEATHER_TOPIC_JSON)
         .groupBy((key, value) -> key)
         .aggregate(WeatherService::getAverageTemp, (key, value, aggregator) -> {
-          log.info("Aggregator is: " + aggregator.toString());
-          log.info("Value is: " + value.toString());
           aggregator.getTemps().add(value.getTemp());
           setNewAverage(aggregator);
           return aggregator;
-        }, Materialized.<String, AverageTemp, KeyValueStore<Bytes, byte[]>>as(KafkaConfig.WEATHER_AGGREGATED_TOPIC)
+        }, Materialized.<String, AverageTemp, KeyValueStore<Bytes, byte[]>>as(
+                KafkaConfig.WEATHER_AGGREGATED_TOPIC)
             .withKeySerde(Serdes.String())
             .withValueSerde(new AverageTempSerde()))
         .toStream()
         .mapValues(this::getAverage)
-        .to(KafkaConfig.WEATHER_AGGREGATED_RESULT_TOPIC, Produced.with(Serdes.String(), Serdes.Double()));
+        .to(KafkaConfig.WEATHER_AGGREGATED_RESULT_TOPIC,
+            Produced.with(Serdes.String(), Serdes.String()));
 
     final Topology topology = streamsBuilder.build();
     final KafkaStreams kafkaStreams = new KafkaStreams(topology, properties);
 
     kafkaStreams.start();
-
-
   }
+
   private static AverageTemp getAverageTemp() {
     final var temp = new AverageTemp();
     temp.setTemps(new ArrayList<>());
@@ -113,8 +115,9 @@ public class WeatherService {
     aggregator.setAverage(sum / (double) aggregator.getTemps().size());
   }
 
-  private Double getAverage(final AverageTemp temp) {
+  private String getAverage(final AverageTemp temp) {
+    // 'Cast' to String because our Double values get messed up when serializing into the kafka
     final Double average = temp.getAverage();
-    return average;
+    return average.toString();
   }
 }

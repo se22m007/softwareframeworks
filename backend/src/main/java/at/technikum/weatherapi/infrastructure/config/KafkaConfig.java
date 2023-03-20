@@ -1,5 +1,8 @@
 package at.technikum.weatherapi.infrastructure.config;
 
+import at.technikum.weatherapi.infrastructure.config.serdes.JsonDeserializer;
+import at.technikum.weatherapi.infrastructure.config.serdes.JsonSerializer;
+import at.technikum.weatherapi.infrastructure.config.serdes.WeatherApiJsonDtoSerde;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -83,7 +86,8 @@ public class KafkaConfig {
         StringDeserializer.class);
     properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
         JsonDeserializer.class);
-    properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+    properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG,
+        Serdes.String().getClass().getName());
     properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, WeatherApiJsonDtoSerde.class);
     properties.put("specific.avro.reader", true);
     properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-java-getting-started");

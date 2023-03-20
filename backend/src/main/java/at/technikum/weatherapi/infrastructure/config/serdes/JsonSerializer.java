@@ -1,4 +1,4 @@
-package at.technikum.weatherapi.infrastructure.config;
+package at.technikum.weatherapi.infrastructure.config.serdes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,8 +22,9 @@ public class JsonSerializer<T> implements Serializer<T> {
 
   @Override
   public byte[] serialize(String topic, T data) {
-    if (data == null)
+    if (data == null) {
       return null;
+    }
 
     try {
       return gson.toJson(data).getBytes(StandardCharsets.UTF_8);

@@ -1,4 +1,4 @@
-package at.technikum.weatherapi.infrastructure.config;
+package at.technikum.weatherapi.infrastructure.config.serdes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,8 +31,9 @@ public class JsonDeserializer<T> implements Deserializer<T> {
 
   @Override
   public T deserialize(String topic, byte[] bytes) {
-    if (bytes == null)
+    if (bytes == null) {
       return null;
+    }
 
     try {
       Type type = destinationClass != null ? destinationClass : reflectionTypeToken;

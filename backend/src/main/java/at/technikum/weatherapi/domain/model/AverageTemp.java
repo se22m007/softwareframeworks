@@ -1,4 +1,4 @@
-package at.technikum.weatherapi.application;
+package at.technikum.weatherapi.domain.model;
 
 import lombok.*;
 

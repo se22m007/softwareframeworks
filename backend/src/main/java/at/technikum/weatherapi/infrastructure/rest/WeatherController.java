@@ -2,17 +2,8 @@ package at.technikum.weatherapi.infrastructure.rest;
 
 import at.technikum.weatherapi.WeatherApiCompactDto;
 import at.technikum.weatherapi.application.WeatherService;
-import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
-import at.technikum.weatherapi.infrastructure.config.JsonDeserializer;
-import at.technikum.weatherapi.infrastructure.config.JsonMapper;
-import at.technikum.weatherapi.infrastructure.config.KafkaConfig;
-import at.technikum.weatherapi.infrastructure.rest.model.WeatherApiResponseDto;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import at.technikum.weatherapi.domain.model.WeatherApiResponseDto;
 import lombok.*;
-import org.apache.avro.data.Json;
-import org.apache.avro.specific.SpecificRecordBase;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,23 +15,32 @@ public class WeatherController {
 
   private final WeatherService weatherService;
 
+  /**
+   * For publishing new data via avro schema.
+   */
   @CrossOrigin
   @GetMapping
   public void publishWeatherData() {
     weatherService.publishCompactWeatherData();
   }
 
+  /**
+   * For publishing new data as jsons for the aggregate exercise
+   */
   @CrossOrigin
   @GetMapping("/json")
   public void publishWeatherDataJson() {
     weatherService.publishCompactWeatherDataJson();
   }
 
+  /**
+   * For the exercise of creating, producing and consuming data via avro schema
+   */
   @CrossOrigin
   @GetMapping("/consume")
   public List<WeatherApiResponseDto> consumeWeatherData() {
     final List<WeatherApiCompactDto> dtos = weatherService.consumeCompactWeatherData();
-    final List<WeatherApiResponseDto> response = dtos.stream()
+    return dtos.stream()
         .map(dto -> {
           final WeatherApiResponseDto responseElement = new WeatherApiResponseDto();
           responseElement.setCountry(dto.getCountry());
@@ -50,33 +50,23 @@ public class WeatherController {
           return responseElement;
         })
         .toList();
-    return response;
   }
 
+  /**
+   * For testing purposes to see if the json consuming works
+   */
   @CrossOrigin
   @GetMapping("/consume/json")
   public List<String> consumeWeatherDataJson() {
     return weatherService.consumeWeatherDataJson();
   }
 
+  /**
+   * For the exercise of aggregating a stream
+   */
   @CrossOrigin
   @GetMapping("/aggregate")
   public void aggregateWeatherData() {
     weatherService.aggregateWeatherData();
   }
-/*
-  @GetMapping("/generate")
-  public String generateAvro() throws JsonMappingException {
-    ObjectMapper mapper = new ObjectMapper(new AvroFactory());
-    mapper.findAndRegisterModules();
-    AvroSchemaGenerator gen = new AvroSchemaGenerator();
-    mapper.acceptJsonFormatVisitor(WeatherApiDto.class, gen);
-    AvroSchema schemaWrapper = gen.getGeneratedSchema();
-
-    org.apache.avro.Schema avroSchema = schemaWrapper.getAvroSchema();
-    String asJson = avroSchema.toString(true);
-    return asJson;
-  }
-
- */
 }

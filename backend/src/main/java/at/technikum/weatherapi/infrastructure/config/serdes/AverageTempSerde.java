@@ -1,7 +1,6 @@
-package at.technikum.weatherapi.infrastructure.config;
+package at.technikum.weatherapi.infrastructure.config.serdes;
 
-import at.technikum.weatherapi.application.AverageTemp;
-import at.technikum.weatherapi.application.model.WeatherApiJsonDto;
+import at.technikum.weatherapi.domain.model.AverageTemp;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
