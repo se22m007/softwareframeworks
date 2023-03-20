@@ -7,6 +7,7 @@ import at.technikum.weatherapi.infrastructure.adapter.WeatherApiAdapter;
 import at.technikum.weatherapi.infrastructure.adapter.kafka.WeatherConsumer;
 import at.technikum.weatherapi.infrastructure.adapter.kafka.WeatherProducer;
 import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
+import at.technikum.weatherapi.infrastructure.config.AverageTempSerde;
 import at.technikum.weatherapi.infrastructure.config.CustomSerdes;
 import at.technikum.weatherapi.infrastructure.config.KafkaConfig;
 
@@ -76,14 +77,15 @@ public class WeatherService {
 
     streamsBuilder.<String, WeatherApiJsonDto>stream(KafkaConfig.WEATHER_TOPIC_JSON)
         .groupBy((key, value) -> value.getCountry())
-        .aggregate(this::getAverageTemp, (key, value, aggregator) -> {
+        .aggregate(WeatherService::getAverageTemp, (key, value, aggregator) -> {
           aggregator.getTemps().add(value.getTemp());
           setNewAverage(aggregator);
           return aggregator;
         }, Materialized.<String, AverageTemp, KeyValueStore<Bytes, byte[]>>as(KafkaConfig.WEATHER_AGGREGATED_TOPIC)
-            .withValueSerde(CustomSerdes.averageTemp()))
+            .withValueSerde(new AverageTempSerde()))
         .toStream()
-        .to(KafkaConfig.WEATHER_AGGREGATED_RESULT_TOPIC, Produced.with(Serdes.String(), CustomSerdes.averageTemp()));
+        .to(KafkaConfig.WEATHER_AGGREGATED_RESULT_TOPIC, Produced.with(Serdes.String(),
+            new AverageTempSerde()));
 
     final Topology topology = streamsBuilder.build();
     final KafkaStreams kafkaStreams = new KafkaStreams(topology, properties);
@@ -92,7 +94,7 @@ public class WeatherService {
 
 
   }
-  private AverageTemp getAverageTemp() {
+  private static AverageTemp getAverageTemp() {
     final var temp = new AverageTemp();
     temp.setTemps(new ArrayList<>());
     return temp;
