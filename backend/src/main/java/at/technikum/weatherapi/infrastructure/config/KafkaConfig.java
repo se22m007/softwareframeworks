@@ -1,27 +1,17 @@
 package at.technikum.weatherapi.infrastructure.config;
 
-import io.confluent.connect.avro.AvroConverter;
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.streams.StreamsConfig;
-import org.apache.tomcat.Jar;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -94,7 +84,19 @@ public class KafkaConfig {
     properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
         JsonDeserializer.class);
     properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-    properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AverageTempSerde.class);
+    properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, WeatherApiJsonDtoSerde.class);
+    properties.put("specific.avro.reader", true);
+    properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-java-getting-started");
+    properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    return properties;
+  }
+
+  public Properties loadConsumerStringConfig() {
+    final Properties properties = loadConfig();
+    properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+        StringDeserializer.class);
+    properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+        StringDeserializer.class);
     properties.put("specific.avro.reader", true);
     properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-java-getting-started");
     properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");

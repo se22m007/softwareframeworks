@@ -54,6 +54,12 @@ public class WeatherController {
   }
 
   @CrossOrigin
+  @GetMapping("/consume/json")
+  public List<String> consumeWeatherDataJson() {
+    return weatherService.consumeWeatherDataJson();
+  }
+
+  @CrossOrigin
   @GetMapping("/aggregate")
   public void aggregateWeatherData() {
     weatherService.aggregateWeatherData();

@@ -6,19 +6,19 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
 
-public class AverageTempSerde implements Serde<AverageTemp> {
-  public AverageTempSerde() {
+public class WeatherApiJsonDtoSerde implements Serde<WeatherApiJsonDto> {
+  public WeatherApiJsonDtoSerde() {
 
   }
 
   @Override
-  public Serializer<AverageTemp> serializer() {
+  public Serializer<WeatherApiJsonDto> serializer() {
     return new JsonSerializer<>();
   }
 
   @Override
-  public Deserializer<AverageTemp> deserializer() {
-    return new JsonDeserializer<>(AverageTemp.class);
+  public Deserializer<WeatherApiJsonDto> deserializer() {
+    return new JsonDeserializer<>(WeatherApiJsonDto.class);
   }
 
 

@@ -9,4 +9,6 @@ public class AverageTemp {
   private String country;
   private List<Double> temps;
   private Double average;
+
+
 }

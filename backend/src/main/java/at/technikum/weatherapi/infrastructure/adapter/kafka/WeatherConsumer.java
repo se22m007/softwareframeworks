@@ -21,7 +21,7 @@ public class WeatherConsumer {
 
   private final KafkaConfig kafkaConfig;
 
-  public List<WeatherApiCompactDto> consume() {
+  public List<WeatherApiCompactDto> consumeOnce() {
     final Properties properties = kafkaConfig.loadConsumerConfig();
     KafkaConsumer<String, WeatherApiCompactDto> consumer = new KafkaConsumer<>(properties);
     consumer.subscribe(List.of(KafkaConfig.WEATHER_TOPIC));
@@ -30,6 +30,23 @@ public class WeatherConsumer {
       ConsumerRecords<String, WeatherApiCompactDto> records = consumer.poll(Duration.ofMillis(100));
 
       for (ConsumerRecord<String, WeatherApiCompactDto> record : records){
+        if(record != null) {
+          result.add(record.value());
+        }
+      }
+    }
+    return result;
+  }
+
+  public List<String> consumeJson() {
+    final Properties properties = kafkaConfig.loadConsumerStringConfig();
+    KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
+    consumer.subscribe(List.of(KafkaConfig.WEATHER_TOPIC_JSON));
+    List<String> result = new ArrayList<>();
+    while (CollectionUtils.isEmpty(result)){
+      ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+
+      for (ConsumerRecord<String, String> record : records){
         if(record != null) {
           result.add(record.value());
         }
