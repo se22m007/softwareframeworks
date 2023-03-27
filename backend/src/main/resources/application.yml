@@ -16,3 +16,8 @@ spring:
         spring.json.trusted.packages: '*'
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+  influx:
+    token: xvhm-T14BN7KfOQ90a8e1TL4QaxPwufQv-3asP-m1PFQqAfOKUcrMuNHxQajWKW0VbHgMCYfGWPus0fNlhdK1A==
+    url: https://eu-central-1-1.aws.cloud2.influxdata.com
+    org: Technikum Wien
+    bucket: weather

@@ -3,6 +3,9 @@ package at.technikum.weatherapi.infrastructure.rest;
 import at.technikum.weatherapi.WeatherApiCompactDto;
 import at.technikum.weatherapi.application.WeatherService;
 import at.technikum.weatherapi.domain.model.WeatherApiResponseDto;
+import at.technikum.weatherapi.infrastructure.adapter.model.CurrentDto;
+import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
+import at.technikum.weatherapi.infrastructure.config.influx.InfluxConfig;
 import lombok.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,5 +71,11 @@ public class WeatherController {
   @GetMapping("/aggregate")
   public void aggregateWeatherData() {
     weatherService.aggregateWeatherData();
+  }
+
+  @CrossOrigin
+  @GetMapping("/influx")
+  private List<CurrentDto> influx() {
+    return weatherService.readAll();
   }
 }

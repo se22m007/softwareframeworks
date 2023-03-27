@@ -4,12 +4,14 @@ package at.technikum.weatherapi.application;
 import at.technikum.weatherapi.WeatherApiCompactDto;
 import at.technikum.weatherapi.domain.model.AverageTemp;
 import at.technikum.weatherapi.domain.model.WeatherApiJsonDto;
+import at.technikum.weatherapi.domain.repository.WeatherRepository;
 import at.technikum.weatherapi.infrastructure.adapter.WeatherApiAdapter;
 import at.technikum.weatherapi.infrastructure.adapter.kafka.WeatherConsumer;
 import at.technikum.weatherapi.infrastructure.adapter.kafka.WeatherProducer;
+import at.technikum.weatherapi.infrastructure.adapter.model.CurrentDto;
 import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
-import at.technikum.weatherapi.infrastructure.config.KafkaConfig;
-import at.technikum.weatherapi.infrastructure.config.serdes.AverageTempSerde;
+import at.technikum.weatherapi.infrastructure.config.kafka.KafkaConfig;
+import at.technikum.weatherapi.infrastructure.config.kafka.serdes.AverageTempSerde;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
@@ -42,6 +44,8 @@ public class WeatherService {
   private final WeatherConsumer weatherConsumer;
   private final KafkaConfig kafkaConfig;
 
+  private final WeatherRepository weatherRepository;
+
   public void publishCompactWeatherData() {
     for (final String city : cities) {
       final WeatherApiDto weatherApiDto = weatherApiAdapter.getWeatherData(city);
@@ -51,8 +55,12 @@ public class WeatherService {
           .setTemp(weatherApiDto.getCurrent().getTemp_c())
           .setCountry(weatherApiDto.getLocation().getCountry())
           .build();
+      weatherRepository.save(weatherApiDto.getCurrent());
+      /*
       weatherProducer.sendRecord(KafkaConfig.WEATHER_TOPIC, KafkaConfig.WEATHER_KEY,
           weatherApiCompactDto);
+
+       */
     }
   }
 
@@ -75,6 +83,10 @@ public class WeatherService {
 
   public List<String> consumeWeatherDataJson() {
     return weatherConsumer.consumeJson();
+  }
+
+  public List<CurrentDto> readAll() {
+    return weatherRepository.readAll();
   }
 
   public void aggregateWeatherData() {
@@ -120,4 +132,6 @@ public class WeatherService {
     final Double average = temp.getAverage();
     return average.toString();
   }
+
+
 }

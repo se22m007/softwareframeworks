@@ -1,4 +1,4 @@
-package at.technikum.weatherapi.infrastructure.config.serdes;
+package at.technikum.weatherapi.infrastructure.config.kafka.serdes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

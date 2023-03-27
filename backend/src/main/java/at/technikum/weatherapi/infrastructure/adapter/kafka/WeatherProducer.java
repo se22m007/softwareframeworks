@@ -1,6 +1,6 @@
 package at.technikum.weatherapi.infrastructure.adapter.kafka;
 
-import at.technikum.weatherapi.infrastructure.config.KafkaConfig;
+import at.technikum.weatherapi.infrastructure.config.kafka.KafkaConfig;
 import lombok.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;

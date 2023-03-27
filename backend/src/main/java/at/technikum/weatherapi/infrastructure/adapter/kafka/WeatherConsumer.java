@@ -1,9 +1,8 @@
 package at.technikum.weatherapi.infrastructure.adapter.kafka;
 
 import at.technikum.weatherapi.WeatherApiCompactDto;
-import at.technikum.weatherapi.infrastructure.config.KafkaConfig;
+import at.technikum.weatherapi.infrastructure.config.kafka.KafkaConfig;
 import lombok.*;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;

@@ -1,8 +1,8 @@
-package at.technikum.weatherapi.infrastructure.config;
+package at.technikum.weatherapi.infrastructure.config.kafka;
 
-import at.technikum.weatherapi.infrastructure.config.serdes.JsonDeserializer;
-import at.technikum.weatherapi.infrastructure.config.serdes.JsonSerializer;
-import at.technikum.weatherapi.infrastructure.config.serdes.WeatherApiJsonDtoSerde;
+import at.technikum.weatherapi.infrastructure.config.kafka.serdes.JsonDeserializer;
+import at.technikum.weatherapi.infrastructure.config.kafka.serdes.JsonSerializer;
+import at.technikum.weatherapi.infrastructure.config.kafka.serdes.WeatherApiJsonDtoSerde;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

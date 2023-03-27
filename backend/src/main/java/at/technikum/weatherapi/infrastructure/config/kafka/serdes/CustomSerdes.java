@@ -1,4 +1,4 @@
-package at.technikum.weatherapi.infrastructure.config.serdes;
+package at.technikum.weatherapi.infrastructure.config.kafka.serdes;
 
 import at.technikum.weatherapi.domain.model.AverageTemp;
 import org.apache.kafka.common.serialization.Serde;
