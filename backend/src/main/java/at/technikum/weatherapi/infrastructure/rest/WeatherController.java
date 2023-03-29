@@ -3,6 +3,7 @@ package at.technikum.weatherapi.infrastructure.rest;
 import at.technikum.weatherapi.WeatherApiCompactDto;
 import at.technikum.weatherapi.application.WeatherService;
 import at.technikum.weatherapi.domain.model.WeatherApiResponseDto;
+import at.technikum.weatherapi.infrastructure.adapter.InfluxAdapter;
 import at.technikum.weatherapi.infrastructure.adapter.model.CurrentDto;
 import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
 import at.technikum.weatherapi.infrastructure.config.influx.InfluxConfig;

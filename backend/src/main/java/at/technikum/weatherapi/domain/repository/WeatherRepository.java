@@ -1,5 +1,6 @@
 package at.technikum.weatherapi.domain.repository;
 
+import at.technikum.weatherapi.infrastructure.adapter.InfluxAdapter;
 import at.technikum.weatherapi.infrastructure.adapter.model.CurrentDto;
 import at.technikum.weatherapi.infrastructure.adapter.model.WeatherApiDto;
 import org.springframework.stereotype.Repository;

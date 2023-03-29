@@ -5,6 +5,7 @@ import at.technikum.weatherapi.WeatherApiCompactDto;
 import at.technikum.weatherapi.domain.model.AverageTemp;
 import at.technikum.weatherapi.domain.model.WeatherApiJsonDto;
 import at.technikum.weatherapi.domain.repository.WeatherRepository;
+import at.technikum.weatherapi.infrastructure.adapter.InfluxAdapter;
 import at.technikum.weatherapi.infrastructure.adapter.WeatherApiAdapter;
 import at.technikum.weatherapi.infrastructure.adapter.kafka.WeatherConsumer;
 import at.technikum.weatherapi.infrastructure.adapter.kafka.WeatherProducer;
@@ -55,7 +56,9 @@ public class WeatherService {
           .setTemp(weatherApiDto.getCurrent().getTemp_c())
           .setCountry(weatherApiDto.getLocation().getCountry())
           .build();
-      weatherRepository.save(weatherApiDto.getCurrent());
+      final CurrentDto currentDto = weatherApiDto.getCurrent();
+      currentDto.setLocationName(weatherApiDto.getLocation().getName());
+      weatherRepository.save(currentDto);
       /*
       weatherProducer.sendRecord(KafkaConfig.WEATHER_TOPIC, KafkaConfig.WEATHER_KEY,
           weatherApiCompactDto);

@@ -4,16 +4,15 @@ import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-@Data
 @Measurement(name = "currentdto")
+@Data
 public class CurrentDto {
-  @Column(tag = true, timestamp = true)
-  private LocalDateTime lastUpdated;
+  @Column(tag = true)
+  private String locationName;
   @Column
   private Double temp_c;
-  @Column
-  private ConditionDto condition;
   @Column
   private Double wind_kph;
   @Column
