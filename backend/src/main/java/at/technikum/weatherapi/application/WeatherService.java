@@ -59,11 +59,8 @@ public class WeatherService {
       final CurrentDto currentDto = weatherApiDto.getCurrent();
       currentDto.setLocationName(weatherApiDto.getLocation().getName());
       weatherRepository.save(currentDto);
-      /*
       weatherProducer.sendRecord(KafkaConfig.WEATHER_TOPIC, KafkaConfig.WEATHER_KEY,
           weatherApiCompactDto);
-
-       */
     }
   }
 
